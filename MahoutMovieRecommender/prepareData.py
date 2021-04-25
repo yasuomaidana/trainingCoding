@@ -1,6 +1,7 @@
 import csv
 import time
 import os
+import sys
 #Creates an csv file with the unique members 
 
 #Name of the shortest version of information
@@ -10,9 +11,11 @@ pIds ="product/productId: " #product id selector
 uIds = "review/userId: " #user id selector
 ss = "review/score: " #score selector
 
+totalTime =0
 #Filter the information using Ids as reference and store the
 #information into a name.csv file
 def filterId(name,Ids):
+    global totalTime
     #Validates if the file exists
     name = "data/"+name+".csv"
     if os.path.exists(name):
@@ -22,7 +25,7 @@ def filterId(name,Ids):
     uwriter = csv.writer(uFname)
     #Initialize the list
     rawInfo = []
-    print("Starts"+name+" raw filtering")
+    print("Start "+name+" raw filtering")
     start = time.time()
     #Extracts the information
     with open(filename,errors='replace') as infile:
@@ -33,14 +36,17 @@ def filterId(name,Ids):
     infile.close()
     end = time.time()
     print("Execution"+name+" raw filtering time in seconds: ",(end - start))
-
+    totalTime +=start-end
     start = time.time()
     #Creates an array of the unique members 
     setInfo = set(rawInfo)
+    setInfo = list(setInfo)
+    setInfo.sort()
     end = time.time()
     print("Execution set"+name+" time in seconds: ",(end - start))
-    print("No. users printed: ",len(setInfo))
-
+    print("No."+name+ " saved: ",len(setInfo))
+    
+    totalTime +=start-end
     #Writes the information founded
     start = time.time()
     print("Starts writing in"+name)
@@ -49,9 +55,10 @@ def filterId(name,Ids):
     uFname.close()
     end = time.time()
     print("Execution write users time in seconds: ",(end - start))
-
+    totalTime +=start-end
 #Extracts the information needed for the recommendation
 def bigFilter():
+    global totalTime
     filen = input("Insert the path of your data: ")
     #time at the start of program is noted
     start = time.time()
@@ -76,44 +83,52 @@ def bigFilter():
     short.close()
     #total time taken to print the file
     print("Execution time in seconds: ",(end - start))
-    print("No. of lines printed: ",count)
+    print("No. of lines saved: ",count)
+    totalTime +=start-end
 
 #Read the CSV and return a list of whatever it reads
+def readToDict(name):
+    rList = {}
+    data = open("data/"+name+".csv", "r")
+    count = 0
+    for line in data.readlines():
+        d=line.replace("\n", "")
+        rList[d]=count
+        count+=1
+    data.close()
+    return rList
 def readToList(name):
     rList = []
     data = open("data/"+name+".csv", "r")
     for line in data.readlines():
-        rList.append(line.replace("\n", ""))
+        d=line.replace("\n", "")
+        rList.append(d)
     data.close()
     return rList
-
 #Prepares the data, writes a csv that contains userId,productId,score
 def prepData():
+    global totalTime
     #Validates if the file exists
     name ="data/data.csv"
     if os.path.exists(name):
         return
-    #Prepares the file and its writer
-    data = open(name, "w")
-    writer = csv.writer(data)
+    print("Start preparing data")
+    start = time.time()
     #Read the products and users as lists
-    products = readToList("products")
-    users = readToList("users")
+    products = readToDict("products")
+    users = readToDict("users")
     count = 0
-    c2=0
     dats=[]
     #Start extractions
-    print("Starts preparing data")
-    start = time.time()
     with open(filename,errors='replace') as infile:
         for line in infile:
             #Extracts the index of the products and users
             if pIds in line:
                 product = line.replace(pIds,"").replace("\n","")
-                pId = products.index(product)+1
+                pId = products[product]+1
             if uIds in line:
                 user = line.replace(uIds,"").replace("\n","")
-                uId = users.index(user)+1
+                uId = users[user]+1
             #Extracts the score
             if ss in line:
                 score = line.replace(ss,"").replace("\n","")
@@ -122,23 +137,121 @@ def prepData():
                 dats.append(row)
                 #writer.writerow(row)
                 count +=1
-                if count%1e4==0:
-                    writer.writerows(dats)
-                    dats = []
-                    c2+=1
-                    print(count/7e6)
-                if c2==2:
-                    break
-    data.close()
+            if count %1e5==0:
+                sys.stdout.write('\r')
+                # the exact output you're looking for:
+                sys.stdout.write("%d%% %d" % (count*100/7911684,count))
+                sys.stdout.flush()
     infile.close()
+    #Prepares the file and its writer
+    with open(name, "w") as data:
+        writer = csv.writer(data)
+        writer.writerows(dats)
+    data.close()
+    
     end = time.time()
     print("Execution time in seconds: ",(end - start))
-    print("No. of reviews: ",count)
-    print(len(dats))
+    print("No. of reviews: ",len(dats))
+    totalTime +=start-end
+    #print(len(dats))
+def getLen(name):
+    count=0
+    if not os.path.exists(name):
+        return 0
+    with open(name,errors='replace') as infile:
+        for _ in infile:
+            count+=1
+    infile.close()
+    return count
+def valLen():
+    global totalTime
+    names=["data","products","users"]
+    lens = [7911684,253059,889176]
+    i=0
+    print("Starting validation")
+    start = time.time()
+    for name in names:
+        pname = "data/"+name+".csv"
+        l = getLen(pname)
+        print(l)
+        if lens[i]!=l and l !=0:
+            print("Deleting file "+name)
+            os.remove(pname)
+        i+=1
+    
+    end = time.time()
+    print("Execution time in seconds: ",(end - start))
+    totalTime+=start-end
 
+def valData():
+    global totalTime
+    #Validates if the file exists
+    name ="data/data.csv"
+    if not os.path.exists(name):
+        print("Something goes wrong")
+        return
+    print("Start validation of data")
+    start = time.time()
+    #Read the products and users as lists
+    products = readToList("products")
+    users = readToList("users")
+    storedData = readToList("data")
+    count = 0
+    
+    #Start extractions
+    with open(filename,errors='replace') as infile:
+        for line in infile:
+            #Extracts the index of the products and users
+            if pIds in line:
+                product = line.replace(pIds,"").replace("\n","")
+            if uIds in line:
+                user = line.replace(uIds,"").replace("\n","")
+            #Extracts the score
+            if ss in line:
+                #score = line.replace(ss,"").replace("\n","")
+                #score = float(score)
+                lineData = storedData[count].replace("\n","").split(",")
+                s_product = products[int(lineData[1])-1]
+                s_user = users[int(lineData[0])-1]
+                count+=1
+                if (s_user!=user or s_product!=product):
+                    print()
+                    print("Stored bad")
+                    print("Expected U:{} P:{}".format(user,product))
+                    print("Received U:{} P:{}".format(s_user,s_product))
+                    break
+                 
+            if count %1e5==0:
+                sys.stdout.write('\r')
+                # the exact output you're looking for:
+                sys.stdout.write("Revised %d%% of data" % (count*100/7911684))
+                sys.stdout.flush()
+    infile.close()
+    
+    end = time.time()
+    print("Execution time in seconds: ",(end - start))
+    totalTime +=start-end
+def compres():
+    import zipfile
+    global totalTime
+    names=["data","products","users"]
+    print("Start compresion of data")
+    start = time.time()
+    for name in names:
+        pname = "data/"+name+".csv"
+        ziper = zipfile.ZipFile('data/{}.zip'.format(name), 'w')
+        ziper.write(pname, compress_type=zipfile.ZIP_DEFLATED)
+        ziper.close()
+        os.remove(pname)
+    end = time.time()
+    totalTime +=start-end
 if not os.path.exists(filename):
     bigFilter()
 
+valLen()
 filterId("users",uIds)
 filterId("products",pIds)
 prepData()
+valData()
+compres()
+print("Total time used to prepare data ",-totalTime)
