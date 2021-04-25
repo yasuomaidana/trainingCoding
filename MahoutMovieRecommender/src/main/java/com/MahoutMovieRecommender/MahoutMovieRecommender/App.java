@@ -14,6 +14,9 @@ public class App
 {
     public static void main( String[] args ) throws IOException
     {
-    	DataModel model = new FileDataModel(new File("/Users/nsl-intern/Downloads/movies.txt"));
+    	//DataModel model = new FileDataModel(new File("/Users/nsl-intern/Downloads/movies.txt"));
     }
+}
+class Data{
+
 }

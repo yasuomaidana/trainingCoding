@@ -1,8 +1,11 @@
+##########################################################
+# This program Creates an csv file with the unique members 
+##########################################################
 import csv
 import time
 import os
 import sys
-#Creates an csv file with the unique members 
+
 
 #Name of the shortest version of information
 filename = "shorter.txt"
@@ -10,8 +13,9 @@ filename = "shorter.txt"
 pIds ="product/productId: " #product id selector
 uIds = "review/userId: " #user id selector
 ss = "review/score: " #score selector
-
+#Used to measure how long it takes
 totalTime =0
+
 #Filter the information using Ids as reference and store the
 #information into a name.csv file
 def filterId(name,Ids):
@@ -56,7 +60,10 @@ def filterId(name,Ids):
     end = time.time()
     print("Execution write users time in seconds: ",(end - start))
     totalTime +=start-end
-#Extracts the information needed for the recommendation
+
+#Filters the information from a large text obtained from
+#http://snap.stanford.edu/data/web-Movies.html
+#and extracts what we need
 def bigFilter():
     global totalTime
     filen = input("Insert the path of your data: ")
@@ -86,7 +93,7 @@ def bigFilter():
     print("No. of lines saved: ",count)
     totalTime +=start-end
 
-#Read the CSV and return a list of whatever it reads
+#Read the CSV and return a dictionary of whatever it reads
 def readToDict(name):
     rList = {}
     data = open("data/"+name+".csv", "r")
@@ -97,6 +104,8 @@ def readToDict(name):
         count+=1
     data.close()
     return rList
+
+#Read the CSV and return a list of whatever it reads
 def readToList(name):
     rList = []
     data = open("data/"+name+".csv", "r")
@@ -105,6 +114,7 @@ def readToList(name):
         rList.append(d)
     data.close()
     return rList
+
 #Prepares the data, writes a csv that contains userId,productId,score
 def prepData():
     global totalTime
@@ -153,7 +163,8 @@ def prepData():
     print("Execution time in seconds: ",(end - start))
     print("No. of reviews: ",len(dats))
     totalTime +=start-end
-    #print(len(dats))
+
+#Read a csv and returns how many lines it contains
 def getLen(name):
     count=0
     if not os.path.exists(name):
@@ -163,6 +174,8 @@ def getLen(name):
             count+=1
     infile.close()
     return count
+
+#Validates the length of information stored
 def valLen():
     global totalTime
     names=["data","products","users"]
@@ -183,6 +196,7 @@ def valLen():
     print("Execution time in seconds: ",(end - start))
     totalTime+=start-end
 
+#Check if all the information is correct
 def valData():
     global totalTime
     #Validates if the file exists
@@ -231,6 +245,8 @@ def valData():
     end = time.time()
     print("Execution time in seconds: ",(end - start))
     totalTime +=start-end
+
+#Compress the data stored
 def compres():
     import zipfile
     global totalTime
@@ -245,13 +261,17 @@ def compres():
         os.remove(pname)
     end = time.time()
     totalTime +=start-end
+
+#Check if the shorter txt exists, if not it creates its
+#it will ask for the path of the big txt file
 if not os.path.exists(filename):
     bigFilter()
 
+#Main part of the code
 valLen()
 filterId("users",uIds)
 filterId("products",pIds)
 prepData()
 valData()
-compres()
+if input("Compress and delete? (1) yes (0) no")=="1":compres()
 print("Total time used to prepare data ",-totalTime)
