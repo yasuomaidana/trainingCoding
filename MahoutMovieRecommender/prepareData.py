@@ -66,7 +66,7 @@ def filterId(name,Ids):
 #and extracts what we need
 def bigFilter():
     global totalTime
-    filen = input("Insert the path of your data: ")
+    filen = "movies.txt"
     #time at the start of program is noted
     start = time.time()
     #keeps a track of number of lines in the file
