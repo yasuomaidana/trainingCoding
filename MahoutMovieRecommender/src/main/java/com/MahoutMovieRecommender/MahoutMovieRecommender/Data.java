@@ -1,6 +1,7 @@
 package com.MahoutMovieRecommender.MahoutMovieRecommender;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,6 +17,9 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 //This class contains all the functions and parameters related with data
 class Data{
@@ -39,10 +43,12 @@ class Data{
 		tryLoad();
 		System.out.format("Number of Users %d, Products %d, and Reviews %d %n", TotalUsers,TotalProducts,TotalReviews);
 	}
+	
+	// Tries to 
 	@SuppressWarnings("unchecked")
 	public void tryLoad() throws IOException, ClassNotFoundException{
 		
-		File tmpDir = new File(rootP+"/data.csv");
+		File tmpDir = new File(rootP+"/data.zip");
 		boolean exists_data = tmpDir.exists();
 		tmpDir = new File(rootP+"/users.hash");
 		boolean exists_users = tmpDir.exists();
@@ -64,10 +70,10 @@ class Data{
 			ProductsId=(HashMap<Integer, String>)obj;
 			buffer.close();
 			reader.close();
-			countReviews();
 			TotalUsers=Users.size();
 			TotalProducts=ProductsId.size();
-			
+			Decompress();
+			countReviews();
 			System.out.println("Ending loading");
 		}
 	}
@@ -147,15 +153,70 @@ class Data{
         reader.close();
         writer.close();
         
-        System.out.println("Stopping reading");
+        
+        //Saving information
         FileOutputStream fos = new FileOutputStream(System.getProperty("user.dir")+"/data/users.hash");
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(Users);
         oos.close();
-        System.out.println("Stopping reading");
+        
         fos = new FileOutputStream(System.getProperty("user.dir")+"/data/productsId.hash");
         oos = new ObjectOutputStream(fos);
         oos.writeObject(ProductsId);
         oos.close();
+        Compress();
+        
+        System.out.println("Stopping reading");
+    }
+	
+	public void Compress() throws IOException{
+		String sourceFile = rootP+"/data.csv";
+        FileOutputStream fos = new FileOutputStream(rootP+"/data.zip");
+        ZipOutputStream zipOut = new ZipOutputStream(fos);
+        File fileToZip = new File(sourceFile);
+        FileInputStream fis = new FileInputStream(fileToZip);
+        ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
+        zipOut.putNextEntry(zipEntry);
+        byte[] bytes = new byte[1024];
+        int length;
+        while((length = fis.read(bytes)) >= 0) {
+            zipOut.write(bytes, 0, length);
+        }
+        zipOut.close();
+        fis.close();
+        fos.close();
+	}
+	public void Decompress() throws IOException {
+        String fileZip = rootP+"/data.zip";
+        File destDir = new File(rootP);
+        if (!destDir.exists()) {
+            destDir.mkdir();
+        }
+        ZipInputStream zipIn = new ZipInputStream(new FileInputStream(fileZip));
+        ZipEntry entry = zipIn.getNextEntry();
+        // iterates over entries in the zip file
+        while (entry != null) {
+            String filePath = destDir+"/"+ entry.getName();
+            if (!entry.isDirectory()) {
+                // if the entry is a file, extracts it
+                extractFile(zipIn, filePath);
+            } else {
+                // if the entry is a directory, make the directory
+                File dir = new File(filePath);
+                dir.mkdirs();
+            }
+            zipIn.closeEntry();
+            entry = zipIn.getNextEntry();
+        }
+        zipIn.close();
+    }
+	private void extractFile(ZipInputStream zipIn, String filePath) throws IOException {
+        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
+        byte[] bytesIn = new byte[4096];
+        int read = 0;
+        while ((read = zipIn.read(bytesIn)) != -1) {
+            bos.write(bytesIn, 0, read);
+        }
+        bos.close();
     }
 }
