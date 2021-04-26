@@ -1,127 +1,161 @@
 package com.MahoutMovieRecommender.MahoutMovieRecommender;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Enumeration;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Reader;
 import java.util.HashMap;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
 
 //This class contains all the functions and parameters related with data
 class Data{
 	//Directory's path
 	String pathDir;
-	int BUFFER_SIZE = 4096;
 	// Total information
 	int TotalReviews;
 	int TotalProducts;
 	int TotalUsers;
-	HashMap<Integer, String> Products = new HashMap<Integer, String>();
+	String rootP = System.getProperty("user.dir")+"/data";
+	HashMap<Integer, String> ProductsId = new HashMap<Integer, String>();
 	HashMap<String,Integer> Users = new HashMap<String,Integer>();
+	HashMap<String,Integer> Products = new HashMap<String,Integer>();
 	//Constructor
-	public Data() throws IOException{
+	public Data() {}
+	public Data(String path) throws IOException, ClassNotFoundException{
 		//Get the current name
- 	pathDir = System.getProperty("user.dir")+"/";
-		getDat();
-		zipToHash();
+		pathDir = path;
+		//getDat();
+		//zipToHash();
+		tryLoad();
+		System.out.format("Number of Users %d, Products %d, and Reviews %d %n", TotalUsers,TotalProducts,TotalReviews);
+	}
+	@SuppressWarnings("unchecked")
+	public void tryLoad() throws IOException, ClassNotFoundException{
 		
+		File tmpDir = new File(rootP+"/data.csv");
+		boolean exists_data = tmpDir.exists();
+		tmpDir = new File(rootP+"/users.hash");
+		boolean exists_users = tmpDir.exists();
+		tmpDir = new File(rootP+"/productsId.hash");
+		boolean exists_products = tmpDir.exists();
+		if (!(exists_data&&exists_users&&exists_products)){
+			processFile();
+		}else {
+			System.out.println("Loading configuration data");
+			FileInputStream reader=new FileInputStream(rootP+"/users.hash");
+			ObjectInputStream buffer=new ObjectInputStream(reader);
+			Object obj=buffer.readObject();
+			Users=(HashMap<String,Integer>)obj;
+			buffer.close();
+			reader.close();
+			reader=new FileInputStream(rootP+"/productsId.hash");
+			buffer=new ObjectInputStream(reader);
+			obj=buffer.readObject();
+			ProductsId=(HashMap<Integer, String>)obj;
+			buffer.close();
+			reader.close();
+			countReviews();
+			TotalUsers=Users.size();
+			TotalProducts=ProductsId.size();
+			
+			System.out.println("Ending loading");
+		}
 	}
-	
-	public void zipToHash() throws IOException{
-		zipUser();
-		zipProduct();
+	public void countReviews() throws IOException {
+		TotalReviews = 0;
+		try (InputStream is = new BufferedInputStream(new FileInputStream(rootP+"/data.csv"))) {
+			byte[] c = new byte[1024];
+			 
+			 int readChars = 0;
+			 while ((readChars = is.read(c)) != -1) {
+			     for (int i = 0; i < readChars; ++i) {
+			         if (c[i] == '\n') {
+			             ++TotalReviews;
+			         }
+			     }
+			     }
+		}
 	}
-	
-	//Read the zip file and fill User hashtable
-	public void zipUser() throws IOException{
-		ZipFile zipFile = new ZipFile(pathDir+"data/users.zip");
-		Enumeration<? extends ZipEntry> entries = zipFile.entries();
-	 	while (entries.hasMoreElements()) {
-	         ZipEntry entry = entries.nextElement();
-	         InputStream input = zipFile.getInputStream(entry);
-	         BufferedReader br = new BufferedReader(new InputStreamReader(input));
-	         int i =1;
-	         String user = br.readLine();
-	         Users.put(user, i);
-	         i+=1;
-	         while(user!=null){
-	         	user = br.readLine();
-	             Users.put(user, i);
-	             i+=1;
-	         }
-	     }
-	     zipFile.close();
-	     TotalUsers = Users.size()-1;
-	     System.out.format("Number of users: %d %n",TotalUsers);
-	}
-	
-	//Read the zip file and fill Product hashtable
-	public void zipProduct() throws IOException{
-		ZipFile zipFile = new ZipFile(pathDir+"data/products.zip");
- 	Enumeration<? extends ZipEntry> entries = zipFile.entries();
- 	while (entries.hasMoreElements()) {
-         ZipEntry entry = entries.nextElement();
-         InputStream input = zipFile.getInputStream(entry);
-         BufferedReader br = new BufferedReader(new InputStreamReader(input));
-         int i =1;
-         String product = br.readLine();
-         Products.put(i, product);
-         i+=1;
-         while(product!=null){
-         	product = br.readLine();
-             Products.put(i,product);
-             i+=1;
-         }
-     }
-     zipFile.close();
-     TotalProducts = Products.size()-1;
-     System.out.format("Number of products: %d %n",TotalProducts);
-	}
-	//Read the data.zip file and unzip it
-	public void getDat() throws IOException {
-		//Read the data contained in data.zip
- 	ZipInputStream zipIn = new ZipInputStream(new FileInputStream(pathDir+"data/data.zip"));
-     ZipEntry entry = zipIn.getNextEntry();
-     // iterates over entries in the zip file
-     String filePath = pathDir +"data/data.csv";
-     while (entry != null) {
-         extractFile(zipIn, filePath);
-         zipIn.closeEntry();
-         entry = zipIn.getNextEntry();
-     }
-     zipIn.close();
-     
-     TotalReviews = 0;
-     InputStream is = new BufferedInputStream(new FileInputStream(filePath));
-     
-     byte[] c = new byte[1024];
-     
-     int readChars = 0;
-     while ((readChars = is.read(c)) != -1) {
-         for (int i = 0; i < readChars; ++i) {
-             if (c[i] == '\n') {
-                 ++TotalReviews;
-             }
-         }
-     }
-     is.close();
-     System.out.format("Number of reviews: %d %n",TotalReviews);
-	}
-	//Extracts the file
-	private void extractFile(ZipInputStream zipIn, String filePath) throws IOException {
-     BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
-     byte[] bytesIn = new byte[BUFFER_SIZE];
-     int read = 0;
-     while ((read = zipIn.read(bytesIn)) != -1) {
-         bos.write(bytesIn, 0, read);
-     }
-     bos.close();
- }
+	public void processFile() throws IOException {
+		//Reads the gzip 
+        FileInputStream file = new FileInputStream(pathDir);
+        GZIPInputStream gzipInput = new GZIPInputStream(file);
+        Reader decoder = new InputStreamReader(gzipInput);
+        BufferedReader reader = new BufferedReader(decoder);
+        //Generates patterns
+        Pattern usersRegex = Pattern.compile("review\\/userId: ([\\D\\d]+)");
+        Pattern reviewsRegex = Pattern.compile("review\\/score: ([\\D\\d]+)");
+        Pattern productsRegex = Pattern.compile("product\\/productId: ([\\D\\d]+)");
+        //Matchers
+        Matcher match_User;
+        Matcher match_Product;
+        Matcher match_Score;
+        //File writers
+        FileWriter writer = new FileWriter(System.getProperty("user.dir")+"/data/data.csv");
+        
+        String user = "";
+        String score = "";
+        String product = "";
+        
+        System.out.println("Start reading movies.txt.gz");
+        
+        String currentLine = reader.readLine();
+        while (currentLine != null) {
+
+        	match_User = usersRegex.matcher(currentLine);
+        	match_Product = productsRegex.matcher(currentLine);
+        	match_Score = reviewsRegex.matcher(currentLine);
+            
+            if (match_User.matches()) {
+                user = currentLine.split(" ")[1];
+                if (Users.get(user) == null) {
+                    this.TotalUsers++;
+                    Users.put(user, this.TotalUsers);
+                }
+            }
+            
+            
+            if (match_Product.matches()) {
+                product = currentLine.split(" ")[1];
+                if (Products.get(product) == null) {
+                    this.TotalProducts++;
+                    Products.put(product, this.TotalProducts);
+                    ProductsId.put(this.TotalProducts, product);
+                }
+            }
+            
+
+            if (match_Score.matches()) {
+                score = currentLine.split(" ")[1];
+                this.TotalReviews++;
+                writer.write(Users.get(user) + "," + Products.get(product) + "," + score + "\n");
+            }
+
+            currentLine = reader.readLine();
+        }
+
+        reader.close();
+        writer.close();
+        
+        System.out.println("Stopping reading");
+        FileOutputStream fos = new FileOutputStream(System.getProperty("user.dir")+"/data/users.hash");
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        oos.writeObject(Users);
+        oos.close();
+        System.out.println("Stopping reading");
+        fos = new FileOutputStream(System.getProperty("user.dir")+"/data/productsId.hash");
+        oos = new ObjectOutputStream(fos);
+        oos.writeObject(ProductsId);
+        oos.close();
+    }
 }

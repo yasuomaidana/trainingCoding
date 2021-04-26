@@ -19,10 +19,10 @@ import org.apache.mahout.cf.taste.similarity.UserSimilarity;
 public class MovieRecommender extends Data{
 	DataModel model;
 	UserBasedRecommender recommender;
-	public MovieRecommender() throws IOException, TasteException {
-		super();
+	public MovieRecommender(String path) throws IOException, TasteException, ClassNotFoundException {
+		super(path);
 		
-		model = new FileDataModel(new File(this.pathDir+"/data/data.csv"));
+		model = new FileDataModel(new File(System.getProperty("user.dir")+"/data/data.csv"));
 		UserSimilarity similarity = new PearsonCorrelationSimilarity(model);
         UserNeighborhood neighborhood = new ThresholdUserNeighborhood(0.1, similarity, model);
         recommender = new GenericUserBasedRecommender(model, neighborhood, similarity);
@@ -35,8 +35,7 @@ public class MovieRecommender extends Data{
 		List<String> recommendations = new ArrayList<String>();
 		for (RecommendedItem recommendation : recommender.recommend(user_Id, 3)) {
 			int prodId = (int) recommendation.getItemID();
-			String product =Products.get(prodId);
-			//System.out.format("Product recommended: %s with id: %d %n",product,prodId);
+			String product =ProductsId.get(prodId);			
             recommendations.add(product);
         }
 		System.out.println("Get recommendations end");
