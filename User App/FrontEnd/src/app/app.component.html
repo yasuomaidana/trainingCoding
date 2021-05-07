@@ -1,0 +1,111 @@
+<mat-toolbar color="primary">
+  
+  <img src="/assets/breakable.png" class="logo"
+  style="align-self: center;">
+  <span class="header">Breakable Toy</span>
+  
+</mat-toolbar>
+
+<mat-toolbar color="foreground">
+  <mat-toolbar-row>
+ 
+    <mat-form-field>
+      <input type="text" 
+      placeholder="Enter name" 
+      matInput [formControl]="nameF"
+      [matAutocomplete]="auto">
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let option of nameOp" [value]="option">
+          {{option}}
+        </mat-option>
+      </mat-autocomplete>
+   </mat-form-field>
+   &nbsp;
+   <mat-form-field>
+     <input type="text" 
+      placeholder="Enter last name" 
+      matInput [formControl]="lnameF"
+      [matAutocomplete]="auto"
+      (ngModelChange)="changes()">
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let option of lastnameOp" [value]="option">
+          {{option}}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+
+    <span class="flex-spacer"></span>
+    <span >Add new user &nbsp;</span>
+    <button mat-fab color="primary" (click)="openNewUser()">
+      <mat-icon>person_add</mat-icon>
+    </button>
+  </mat-toolbar-row>
+
+  
+</mat-toolbar>
+
+<div>
+  <mat-table #table [dataSource]="dataSource">
+
+		<!--- Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
+
+	
+		<!-- Name Column -->
+		<ng-container matColumnDef="name">
+			<mat-header-cell *matHeaderCellDef > Name </mat-header-cell>
+			<mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+		</ng-container>
+    <ng-container matColumnDef="lastname">
+			<mat-header-cell *matHeaderCellDef > Lastname </mat-header-cell>
+			<mat-cell *matCellDef="let element"> {{element.lastname}} </mat-cell>
+		</ng-container>
+		<ng-container matColumnDef="phone">
+			<mat-header-cell *matHeaderCellDef > Phone </mat-header-cell>
+			<mat-cell *matCellDef="let element"> {{element.phone}} </mat-cell>
+		</ng-container>
+    <ng-container matColumnDef="email">
+			<mat-header-cell *matHeaderCellDef > Email </mat-header-cell>
+			<mat-cell *matCellDef="let element"> {{element.email}} </mat-cell>
+		</ng-container>
+
+    
+
+		<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+		<mat-row *matRowDef="let row; columns: displayedColumns;" matRipple class="element-row" [cdkDetailRow]="row" [cdkDetailRowTpl]="tpl">
+		</mat-row>
+	</mat-table>
+
+  
+<mat-paginator length="{{nusers}}"
+              [pageSize]="5"
+              hidePageSize="true"
+              showFirstLastButtons>
+              
+</mat-paginator>
+</div>
+
+<ng-template #tpl let-element>
+  
+	<div class="mat-row detail-row" [@detailExpand] style="overflow: hidden">
+    
+    <button mat-raised-button color="warn" (click)="deleteUser(element._id)">
+      Delete user
+      <span class="material-icons">
+        person_remove
+        </span>
+    </button>
+    <button mat-raised-button color="accent" (click)="modifyUser(element._id,element)">
+      Modify user
+      <span class="material-icons">
+        manage_accounts
+        </span>
+    </button>
+	</div>
+</ng-template>
+
+<mat-toolbar color="accent">
+  
+  <span class="header">Done by Yasuo</span>
+  
+</mat-toolbar>
