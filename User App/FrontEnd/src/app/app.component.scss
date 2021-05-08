@@ -3,9 +3,7 @@
     text-align: center;
 }
 
-.flex-spacer {
-    flex: 1 1 auto;
-}
+
 
 mat-toolbar {
     .header{
@@ -19,4 +17,7 @@ mat-toolbar {
     background-color: blue;
  }
 
- 
+.hiddenRow{
+    text-align: end;
+    padding-right: 2%;
+}

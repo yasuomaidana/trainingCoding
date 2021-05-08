@@ -8,6 +8,8 @@ import {MatPaginator} from '@angular/material/paginator';
 import { User } from './shared/user';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import { ModifyComponent } from './users/modify/modify.component';
+import { Observable } from 'rxjs';
+import { map,startWith} from 'rxjs/operators';
 
 
 @Component({
@@ -22,37 +24,33 @@ import { ModifyComponent } from './users/modify/modify.component';
     ]),
   ],
 })
-export class AppComponent{
+export class AppComponent implements OnInit{
   
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   
   nameF = new FormControl();
-  lnameF = new FormControl();
-  nameOp: string[] = [];
-  lastnameOp: string[] = [];
+  nameOp: String[] = [];
   users : User[]=[];
   user : User | undefined;
   nusers : String="0";
-  displayedColumns: string[] = ['name', 'lastname', 'phone', 'email'];
+  displayedColumns: string[] = ['name', 'lastname', 'phone', 'email','company'];
   dataSource!: MatTableDataSource<User>;
-  
+  filnameOp!: Observable<String[]>;
   
   constructor(public matdialog:MatDialog,
     private userService:UsersService){
-      this.userService.getUsers().subscribe(resp=>{
-        this.users=resp;
-        this.nusers = this.users.length.toString();
-        this.dataSource = new MatTableDataSource(this.users);
-        this.nameOp = this.users.map(a=>a.name!);
-        this.lastnameOp = this.users.map(a=>a.lastname!);
-        console.log(this.lastnameOp);
-        this.dataSource.paginator = this.paginator;
-        
-        console.log(this.users)
-      },err=>{console.log(err)});
+      this.refresh();
     }
   ngOnInit(){
-
+    this.filnameOp = this.nameF.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => typeof value === 'string' ? value:value),
+        map(name => name ? this._filter(name) : this.nameOp)
+      );
+    this.nameF.valueChanges.subscribe(()=>{
+      this.dataSource.filter = this.nameF.value;
+    });
   }
   
   changes(){
@@ -61,41 +59,40 @@ export class AppComponent{
   openNewUser(){
     this.matdialog.open(NewUserComponent)
     .afterClosed()
-    .subscribe(res=>{
-      this.userService.getUsers().subscribe(resp=>{
-        this.users=resp;
-        this.nusers = this.users.length.toString();
-        this.dataSource = new MatTableDataSource(this.users);
-        this.nameOp = this.users.map(a=>a.name!);
-        this.lastnameOp = this.users.map(a=>a.lastname!);
-        this.dataSource.paginator = this.paginator;
-
-        console.log(this.users.length);
-        console.log(this.users);
-      },err=>{console.log(err)});
+    .subscribe(()=>{
+      this.refresh();
     });
   }
 
   modifyUser(id:String,userE:User){
     console.log(userE);
     this.matdialog.open(ModifyComponent,
-      {data:{id:id,user:userE}});
+      {data:{id:id,user:userE}}).afterClosed().subscribe(()=>{
+        this.refresh();
+      });
     //alert(id);
     //console.log(userE);
   }
   deleteUser(id:String){
-    this.userService.deleteUser(id).subscribe(a=>{
-      this.userService.getUsers().subscribe(resp=>{
-        this.users=resp;
-        this.nusers = this.users.length.toString();
-        this.dataSource = new MatTableDataSource(this.users);
-        this.nameOp = this.users.map(a=>a.name!);
-        this.lastnameOp = this.users.map(a=>a.lastname!);
-        this.dataSource.paginator = this.paginator;
-
-        console.log(this.users.length);
-        console.log(this.users);
-      },err=>{console.log(err)});
+    this.userService.deleteUser(id).subscribe(()=>{
+      this.refresh();
     });
+  }
+  refresh(){
+    this.userService.getUsers().subscribe(resp=>{
+      this.users=resp;
+      this.nusers = this.users.length.toString();
+      this.dataSource = new MatTableDataSource(this.users);
+      this.nameOp = this.users.map(a=>a.name!);
+      this.dataSource.paginator = this.paginator;
+
+      console.log(this.users.length);
+      console.log(this.users);
+    },err=>{console.log(err)});
+  }
+  
+  private _filter(name: string): String[] {
+    const filterValue = name.toLowerCase();
+    return this.nameOp.filter(option => option.toLowerCase().indexOf(filterValue) === 0);
   }
 }

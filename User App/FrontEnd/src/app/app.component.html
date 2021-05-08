@@ -8,36 +8,21 @@
 
 <mat-toolbar color="foreground">
   <mat-toolbar-row>
- 
     <mat-form-field>
       <input type="text" 
       placeholder="Enter name" 
       matInput [formControl]="nameF"
       [matAutocomplete]="auto">
-      <mat-autocomplete #auto="matAutocomplete">
-        <mat-option *ngFor="let option of nameOp" [value]="option">
+      <mat-autocomplete #auto="matAutocomplete" >
+        <mat-option *ngFor="let option of filnameOp |async" [value]="option">
           {{option}}
         </mat-option>
       </mat-autocomplete>
    </mat-form-field>
-   &nbsp;
-   <mat-form-field>
-     <input type="text" 
-      placeholder="Enter last name" 
-      matInput [formControl]="lnameF"
-      [matAutocomplete]="auto"
-      (ngModelChange)="changes()">
-      <mat-autocomplete #auto="matAutocomplete">
-        <mat-option *ngFor="let option of lastnameOp" [value]="option">
-          {{option}}
-        </mat-option>
-      </mat-autocomplete>
-    </mat-form-field>
-
-    <span class="flex-spacer"></span>
-    <span >Add new user &nbsp;</span>
-    <button mat-fab color="primary" (click)="openNewUser()">
-      <mat-icon>person_add</mat-icon>
+   <span class="flex-spacer"></span>
+   <span >Add new user &nbsp;</span>
+   <button mat-fab color="primary" (click)="openNewUser()">
+     <mat-icon>person_add</mat-icon>
     </button>
   </mat-toolbar-row>
 
@@ -68,7 +53,10 @@
 			<mat-header-cell *matHeaderCellDef > Email </mat-header-cell>
 			<mat-cell *matCellDef="let element"> {{element.email}} </mat-cell>
 		</ng-container>
-
+    <ng-container matColumnDef="company">
+			<mat-header-cell *matHeaderCellDef > Company </mat-header-cell>
+			<mat-cell *matCellDef="let element"> {{element.company}} </mat-cell>
+		</ng-container>
     
 
 		<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
@@ -78,7 +66,7 @@
 
   
 <mat-paginator length="{{nusers}}"
-              [pageSize]="5"
+              [pageSize]="10"
               hidePageSize="true"
               showFirstLastButtons>
               
@@ -87,20 +75,22 @@
 
 <ng-template #tpl let-element>
   
-	<div class="mat-row detail-row" [@detailExpand] style="overflow: hidden">
-    
+	<div class="hiddenRow" [@detailExpand] style="overflow: hidden">
+    <br>
     <button mat-raised-button color="warn" (click)="deleteUser(element._id)">
       Delete user
       <span class="material-icons">
         person_remove
-        </span>
+      </span>
     </button>
+    &nbsp;
     <button mat-raised-button color="accent" (click)="modifyUser(element._id,element)">
       Modify user
       <span class="material-icons">
         manage_accounts
-        </span>
+      </span>
     </button>
+    <br>
 	</div>
 </ng-template>
 
