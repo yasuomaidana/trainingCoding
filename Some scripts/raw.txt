@@ -1,0 +1,208 @@
+<h1>Markov Chain Compression (Ep 3, Compressor Head)</h1>
+    
+<p><a href="https://www.youtube.com/watch?v=i3AkTO9HLXo">https://www.youtube.com/watch?v=i3AkTO9HLXo</a></p>
+
+<h1>Google I/O 2009 - The Myth of the Genius Programmer</h1>
+
+<p>People are afraid of showing their ignorance.</p>
+
+<p>Bus factor, made your teams avoid concentrate all the knowledge and responsibility so if that person disappears all the project ends.</p>
+
+<p>Drop ego </p>
+
+<p>Criticism is not evil if it helps to improve.</p>
+
+<p>Practice is the key to master anything.</p>
+
+<p>Be the small fish try to challenge yourself. If you are always choosing easy projects, you won't grow up working on the edge of your knowledge.</p>
+
+<p>Be influenced</p>
+
+<p>Be vulnerable</p>
+
+<p>Technology does not solve social issues. Only people can deal with emotions and human behavior. It doesn't matter how advanced is software or a tool if the people don't want to change, it won't work.</p>
+
+<p>Don't try to be a genius; that is not necessary. Just collaborate early and often pay attention to your tools and timing.</p>
+
+<h1>Google I/O 2012 - The Art of Organizational Manipulation</h1>
+
+<p>You need to learn how to navigate in teams. Nowadays projects, are designed and built inside them. So learning how to work in them is necessary not only for the good of the project but for your personal and professional growth.</p>
+
+<p>If you are in charge, you should be a
+servant leader looking for the needings of the team (tools, knowledge, or
+emotional support). If they are well, they work well also.</p>
+
+<p>Additionally, you should pursue
+responsibility and act like an adult.</p>
+
+<h2>Environment </h2>
+
+<p>Some practices and behaviors must be
+avoided:</p>
+
+<p>Being conservative </p>
+
+<p>
+Ignores low performers. They are the ones who need helps. As a
+Muslim saying goes, a caravan is as fast as the slowest of its camels.</p>
+
+<p>The office politician </p>
+
+<p>The boss that asks for performance but doesn’t do anything </p>
+
+<p>Unrealistic expectations </p>
+
+<p>Distrust</p>
+
+<h2>How do you get things done in a dysfunctional environment? </h2>
+
+<p>Ask for forgiveness, not for permission</p>
+
+<p>Sneak ideas in </p>
+
+<p>Don’t destroy, change </p>
+
+<p>Try solutions </p>
+
+<p>Work the ladder </p>
+
+<p>Manage upward perception </p>
+
+<p>Use the favor economy </p>
+
+<p>Get in front of the people </p>
+
+<p>Learn how to ask a busy exec for anything
+</p>
+
+<p>Make small emails, and try to be the most
+efficient as you could </p>
+
+<p>Don’t be a victim</p>
+
+<h1>Google I/O 2011: Programming Well with Others: Social Skills for Geeks</h1>
+
+<p>You should to look for autonomy, responsibility and purpose<br>
+<br>
+</p>
+
+<h1>Developing Expertise: Herding Racehorses, Racing Sheep</h1>
+
+<p>Software development has several ranges of experiences since
+neither the people neither the project are the same </p>
+
+<p>It is a journey, so some practices you acquired could change
+through time </p>
+
+<p>Intuition </p>
+
+<p>Be interactive with novice, avoid useless information. For
+example, large spec sheets or information that won't be using at the beginning.</p>
+
+<p>Activities should change between levels. Novices require and
+need rules and short-time tasks. While senior developers could be bothered with
+administrative kinds of stuff, the delegation of responsibilities helps focus
+meanwhile could help beginners to learn the know-how.</p>
+
+<h1>Damien Katz @ DevconTLV: The Best Programming Language</h1>
+
+<p>There is no best programming
+language. </p>
+
+<p>Criteria for choosing a
+programming language: </p>
+
+<p>
+Productivity: You have to identify
+what is the better scenario for a given language. Which variables and functions
+are built in it, and what do you need. </p>
+
+<p>
+Performance: You have to be aware of
+the dimension/size of your project. For example, some functions could afford some
+low performance. However, if the project works well, don’t waste time on those
+tasks. </p>
+
+<p>
+Reliability: You have to select a
+language that affords the SLA.  </p>
+
+<p>
+Portability: It doesn’t matter if it
+is the most powerful language if you can’t use it in your deployment’s
+environment </p>
+
+<p>
+Community:  </p>
+
+<p>
+What you already know: There is value
+in learning something new.</p>
+
+<h1>Perfection Is An Unrealistic Goal</h1>
+
+<p>Sometimes the process of a task could
+become extremely long and tedious than the task itself. On most occasions, it
+is better to try an idea and see how it works than prepare extraneous research.
+Remember, you can’t specify something you have no idea about, so trying to
+start from there could be troublesome. </p>
+
+<h2>Some Myths </h2>
+
+<p>We can understand/know something at all.</p>
+
+<p>The things are linear. Nothing in nature
+behaves that way, neither learning, neither mastering, neither nothing.</p>
+
+<h2>Some pieces of advice </h2>
+
+<p>Celebrate your success and repeat </p>
+
+<p>90 minutes is the optimal duration to
+sleep</p>
+
+<h1>The Power of an Agile Mindset</h1>
+
+<p>Kaizen</p>
+
+<p>Am I fixing or improving? </p>
+
+<p>Belief about yourself affects other's believes.</p>
+
+<p>We should always look at our team as a whole. Because
+if we look at each other as unhealthy rivals, we could end up fighting between
+us. </p>
+
+<p>We have to be aware of how we congratulate or correct
+someone. </p>
+
+<p>The words chosen could affect the performance and
+mindset; even if we said with good intentions, it could impact negatively.</p>
+
+<h1>Linda Rising on Collaboration, Bonobos and The Brain</h1>
+
+<p>Most of the decisions making go on unconsciously. It seems,
+even if we start an idea on the logical part, in the end, we choose whatever
+our unconscious choose. However, we could help us by gathering data and
+analyzing them. Because once our logical part starts something, our unconscious
+will take that as a root and evolve the idea until a decision. So, it is a good
+practice to gather and analyze data, alone or in a team. It works since the
+members will work better if they understand the reasons for the actions.</p>
+
+<h1>GOTO 2016 • Who do You Trust? Beware of Your Brain • Linda Rising</h1>
+
+<p>We have to be aware about how our unconscious labelers
+works with us, because even if we can’t get rid of it, we could be conscious
+about it and avoid to be mean with others. </p>
+
+<p>Categories depends on context.</p>
+
+<p>Working together could helps to get closer to others.</p>
+
+<h1>Everything is a Remix Remastered (2015 HD)</h1>
+
+<p>Creation requires influence</p>
+
+<p>Copy is a way of learn</p>
+
+<h1>Lecture 2: Shell Tools and Scripting (2020)</h1>
