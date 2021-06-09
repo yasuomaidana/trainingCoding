@@ -33,32 +33,25 @@ class solver extends stack_Values{
         super(input);
     }
     public int solve(){
-        int sol=0;
         if(this.isNum()){
             return this.num;
         }
         String s = this.values.pop();
+        int a = solve();
+        int b = solve();
         if(s=="*"){
-            int a = solve();
-            int b = solve();
             return a*b;
         }
         if(s=="/"){
-            int a =solve();
-            int b =solve();
             return b/a;
         }
         if(s=="+"){
-            int a =solve();
-            int b = solve();
             return a+b;
         }
         if(s=="-"){
-            int a =solve();
-            int b = solve();
             return b-a;
         }
-        return sol;
+        return 0;
     }
 }
 class stack_Values{
