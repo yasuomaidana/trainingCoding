@@ -1,5 +1,7 @@
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
-import java.util.regex.Pattern;  
+import java.util.regex.Pattern;
 public class App {
 /*
 // Reverse Polish ’Notation is postfix notation which in terms of mathematical notion signifies operators following operands. Let’s take a problem statement to implement RPN
@@ -19,15 +21,18 @@ public class App {
 //func rpn(_ input: [String]) -> Int {
 //}*/
     public static void main(String[] args) throws Exception {
-        String[] data = {"10", "6", "9", "3", "+", "-11", "*", "/", "*", "17", "+", "5", "+"};//{"2", "1", "+", "3", "*"};
+        String[] data = {"2", "1", "+", "3", "*"};
         solver working = new solver(data);
-        //working.solve();
-        System.out.println(working.solve());
-        /*String[] data2= {"10", "6", "9", "3", "+", "-11", "*", "/", "*", "17", "+", "5", "+"};
+        working.showEq();
+        String[] data2 = {"4", "13", "5", "/", "+"};
         working.refil(data2);
-        System.out.println(working.solve());*/
+        working.showEq();
+        String[] data3 = {"10", "6", "9", "3", "+", "-11", "*", "/", "*", "17", "+", "5", "+"};
+        working.refil(data3);
+        working.showEq();
     }
 }
+
 class solver extends stack_Values{
     public solver(String[] input){
         super(input);
@@ -52,6 +57,48 @@ class solver extends stack_Values{
             return b-a;
         }
         return 0;
+    }
+    public Map<String,Integer> completeSolve(){
+        Map<String, Integer> solution = new HashMap<String, Integer>();
+        if(this.isNum()){
+            solution.put("n", this.num);
+            solution.put(Integer.toString(this.num), 0);
+            return solution;
+        }
+        String s = this.values.pop();
+        Map<String, Integer> a = completeSolve();
+        Map<String, Integer> b = completeSolve();
+        int ai = a.get("n");
+        int bi = b.get("n");
+        String ap= a.keySet().stream().filter(k->k!="n").findFirst().get();
+        String bp= b.keySet().stream().filter(k->k!="n").findFirst().get();
+        if(s=="*"){
+            solution.put("n", bi*ai);
+            solution.put("("+bp+"*"+ap+")",0);
+            return solution;
+        }
+        if(s=="/"){
+            solution.put("n", bi/ai);
+            solution.put("("+bp+"/"+ap+")",0);
+            return solution;
+        }
+        if(s=="+"){
+            solution.put("n", bi+ai);
+            solution.put("("+bp+"+"+ap+")",0);
+            return solution;
+        }
+        if(s=="-"){
+            solution.put("n", bi-ai);
+            solution.put("("+bp+"-"+ap+")",0);
+            return solution;
+        }
+        return solution;
+    }
+    public void showEq(){
+        Map<String,Integer> res = completeSolve();
+        // using for-each loop for iteration over Map.entrySet()
+        String operation= res.keySet().stream().filter(k->k!="n").findFirst().get();
+        System.out.println(operation+"="+res.get("n"));
     }
 }
 class stack_Values{
