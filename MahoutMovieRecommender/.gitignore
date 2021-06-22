@@ -1,6 +1,0 @@
-/target/
-*.txt
-*.csv
-*.DS_Store
-*/*.DS_Store
-*.txt.gz
