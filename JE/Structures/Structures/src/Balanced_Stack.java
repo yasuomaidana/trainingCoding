@@ -31,21 +31,24 @@ class chainStack{
         this.dict.put(')', '(');
     }
     public void test(String chainToTest){
-        if(!this.chain.empty()){this.chain.clear();}
-        this.chain.setSize(chainToTest.length());
+        prepareStack(chainToTest);
+        String message = chainToTest+" is : ";
 
         char[] chars = chainToTest.toCharArray();
         this.chain.push(chars[0]);
         
-        boolean success = true;
-        String message = chainToTest+" is : ";
+        if(doTest(chars)) System.out.println(message+"balanced");
+        else System.out.println(message+"not balanced");
+    }
+    private void prepareStack(String inputChain){
+        if(!this.chain.empty()){this.chain.clear();}
+        this.chain.setSize(inputChain.length());
+    }
+    private boolean doTest(char[] chars){
         for(int i=1;i<chars.length;i++){
-            success = addOrPop(chars[i]);
-            if(!success){break;}
+            if(!addOrPop(chars[i])) return false;
         }
-        //if(!this.chain.empty()) success=false;
-        if(success){System.out.println(message+"balanced");}
-        else{System.out.println(message+"not balanced");}
+        return true;
     }
     private boolean addOrPop(Character s){
         if (this.Opener.indexOf(s)>=0){
