@@ -5,17 +5,17 @@ import java.util.Stack;
 
 //Check if the strings are balanced
 public class Balanced_Stack {
-    private chainStack chainTester;
     public Balanced_Stack() {
-        this.chainTester = new chainStack();
+        chainStack chainTester = new chainStack();
         System.out.println("Balanced");
-        this.chainTester.test("{[()]}");
-        this.chainTester.test("{}()[{}]");
-        this.chainTester.test("[{[()]}]");
+        chainTester.test("{[()]}");
+        chainTester.test("{}()[{}]");
+        chainTester.test("[{[()]}]");
+        System.out.println();
         System.out.println("Unbalanced");
-        this.chainTester.test("[({)}]");
-        this.chainTester.test("({[}])");
-        this.chainTester.test("()}[]");
+        chainTester.test("[({)}]");
+        chainTester.test("({[}])");
+        chainTester.test("()}[]");
     }
 }
 class chainStack{
