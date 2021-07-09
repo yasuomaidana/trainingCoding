@@ -23,12 +23,16 @@ public class ManualQueue<T>{
         this.tail = node;
         if(this.head==null){this.head=this.tail;}
     }
-    public T remove(){
+    public T poll(){
         T data = this.head.data;
         this.head = this.head.next;
         if (this.head==null){
             this.tail=null;
         }
         return data;
+    }
+    public void clear(){
+        this.head=null;
+        this.tail=null;
     }
 }

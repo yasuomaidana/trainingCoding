@@ -78,7 +78,6 @@ class chainStack extends chainOperations{
         }
     }
 }
-
 class manual_chainStack extends chainOperations{
     //Stack used to store the chain characters
     private ManualStack<Character> chain;
