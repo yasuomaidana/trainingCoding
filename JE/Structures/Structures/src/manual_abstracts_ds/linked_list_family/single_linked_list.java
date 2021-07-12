@@ -12,44 +12,6 @@ public class single_linked_list<T> implements list_interface<T> {
         headNode = tailNode;
         index = 0;
     }
-    public single_linked_list(T data){
-        initialize(data);
-        size+=1;
-    }
-    public T getHead(){
-        return headNode.getData();
-    }
-    public T getTail() {
-        return tailNode.getData();
-    }
-    public void add(T data){
-        single_node<T> node = new single_node<T>(data);
-        if(headNode==null){ initialize(data);}
-        else{
-            tailNode.setNext(node);
-            tailNode = node;
-        }
-        size+=1;
-    }
-    public boolean empty(){
-        return size<=0;
-    }
-    public boolean travelNext(){
-        if (size<=0) return false;
-        if (index > size || (index == 0 && size>0)){
-            currentNode=headNode;
-            index = 1;
-            return true;
-        }
-        if(index<size){
-            currentNode = (single_node<T>) currentNode.getNext();
-        }
-        index++;
-        return index<=size;
-    }
-    public T getTravelerValue(){
-        return currentNode.getData();
-    }
     private single_node<T> remover(Node<T> node){
         if(node.remove().get(0)==null || node == null) return null;
         return (single_node<T>) node.remove().get(0);
@@ -60,24 +22,10 @@ public class single_linked_list<T> implements list_interface<T> {
             headNode=null;
         }
     }
-    public void removeHead(){
-        if(!empty()){
-            headNode = remover(headNode);
-            size--;
-        }
-        checkHeadTail();
-    }
     private single_node<T> get_previous_Tail_Node(){
         single_node<T> previous = getNode(size-1);
         if (previous!=null) previous.setNext(null);
         return previous;
-    }
-    public void removeTail(){
-        if(!empty()){
-            tailNode = get_previous_Tail_Node();
-            size--;
-        }
-        checkHeadTail();
     }
     private boolean validInd(int ind){
         if(ind<=0 || ind>size) {
@@ -85,6 +33,25 @@ public class single_linked_list<T> implements list_interface<T> {
             return false;
         }
         return true;
+    }
+
+    public single_linked_list(T data){
+        initialize(data);
+        size+=1;
+    }
+    //Get data routines
+    public T getHead(){
+        return headNode.getData();
+    }
+    public T getTail() {
+        return tailNode.getData();
+    }
+    public T getTravelerValue(){
+        return currentNode.getData();
+    }
+    @Override
+    public T getValue(int ind) {
+        return getNode(ind).getData();
     }
     @Override
     public single_node<T> getNode(int ind) {
@@ -101,6 +68,48 @@ public class single_linked_list<T> implements list_interface<T> {
         currentNode = currentNode_memory;
         return retNode;
     }
+    //Adding data routine
+    public void add(T data){
+        single_node<T> node = new single_node<T>(data);
+        if(headNode==null){ initialize(data);}
+        else{
+            tailNode.setNext(node);
+            tailNode = node;
+        }
+        size+=1;
+    }
+    //Flags routines
+    public boolean empty(){
+        return size<=0;
+    }
+    public boolean travelNext(){
+        if (size<=0) return false;
+        if (index > size || (index == 0 && size>0)){
+            currentNode=headNode;
+            index = 1;
+            return true;
+        }
+        if(index<size){
+            currentNode = (single_node<T>) currentNode.getNext();
+        }
+        index++;
+        return index<=size;
+    }
+    //Remove routines
+    public void removeHead(){
+        if(!empty()){
+            headNode = remover(headNode);
+            size--;
+        }
+        checkHeadTail();
+    }
+    public void removeTail(){
+        if(!empty()){
+            tailNode = get_previous_Tail_Node();
+            size--;
+        }
+        checkHeadTail();
+    }
     @Override
     public void removeItem(int ind) {
         if(!validInd(ind)) return;
@@ -108,9 +117,6 @@ public class single_linked_list<T> implements list_interface<T> {
         else if(ind == size) removeTail();
         else {getNode(ind-1).setNext(getNode(ind).getNext());size--;}
     }
-    @Override
-    public T getValue(int ind) {
-        return getNode(ind).getData();
-    }
+    
     
 }
