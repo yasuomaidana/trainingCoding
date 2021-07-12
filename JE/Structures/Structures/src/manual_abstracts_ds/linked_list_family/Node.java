@@ -15,20 +15,17 @@ abstract public class Node<T> {
     public T getData(){
         return this.data;
     }
-    abstract ArrayList<Node<T>> remove();
-}
-class genArray<T>{
-    public T tarray[];
-    genArray(T arrT[]){
-        tarray = arrT;
+    protected void setNextNode(Node<T> next){
+        this.next = next;
     }
+    abstract ArrayList<Node<T>> remove();
 }
 class single_node<T> extends Node<T>{
     public single_node(T data){
         super(data);
     }
     public void setNext(Node<T> next){
-        next = this.getNext();
+        setNextNode(next);
     }
     public ArrayList<Node<T>> remove(){
         dataHistory.add(this.getNext());
