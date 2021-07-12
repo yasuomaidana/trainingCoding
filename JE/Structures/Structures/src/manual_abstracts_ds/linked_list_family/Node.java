@@ -46,6 +46,9 @@ class double_node<T> extends Node<T>{
     public double_node<T> createNode(T data){
         return new double_node<T>(data, this);
     }
+    public void setPrev(double_node<T> prev){
+        this.prev = prev;
+    }
     public Node<T> getPrev(){
         return prev;
     }
