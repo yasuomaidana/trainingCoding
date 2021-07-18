@@ -34,22 +34,16 @@ class Result {
                     last_big++;
                     or_Pos.add(last_big);
                 }
-                int deals = or_Pos.indexOf(cur_Pos);
-                shifts+=deals;
-                or_Pos.remove(deals);
             }
             else{
                 if(or_Pos.size()<2&&last_big!=q.size()){
                     last_big++;
                     or_Pos.add(last_big);
                 }
-                int deals = or_Pos.indexOf(cur_Pos);
-                if(deals<0){
-                    System.out.print("");
-                }
-                shifts+=deals;
-                or_Pos.remove(deals);
             }
+            int deals = or_Pos.indexOf(cur_Pos);
+            shifts+=deals;
+            or_Pos.remove(deals);
             seq++;
         }
         System.out.println(shifts);
