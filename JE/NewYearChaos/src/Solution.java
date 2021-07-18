@@ -59,7 +59,7 @@ public class Solution {
 
         IntStream.range(0, t).forEach(tItr -> {
             try {
-                int n = Integer.parseInt(bufferedReader.readLine().trim());
+                Integer.parseInt(bufferedReader.readLine().trim());
 
                 List<Integer> q = Stream.of(bufferedReader.readLine().replaceAll("\\s+$", "").split(" "))
                     .map(Integer::parseInt)
