@@ -9,6 +9,8 @@ import javax.swing.JLabel;
 import javax.swing.JTextPane;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.SystemColor;
+import java.awt.Color;
 
 public class Frame1 {
 
@@ -56,6 +58,7 @@ public class Frame1 {
 		frame.getContentPane().setLayout(null);
 		
 		FirstButton = new JButton("Yasuo Button");
+		FirstButton.setBackground(SystemColor.controlHighlight);
 		FirstButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(null, "Changing label");
@@ -80,6 +83,8 @@ public class Frame1 {
 		frame.getContentPane().add(txtpnHola);
 		
 		RestoreLabel = new JButton("Restore label text");
+		RestoreLabel.setForeground(new Color(255, 0, 255));
+		RestoreLabel.setBackground(new Color(255, 105, 180));
 		RestoreLabel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
