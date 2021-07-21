@@ -1,14 +1,12 @@
 import static java.util.stream.Collectors.toList;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Stack;
-import java.util.Map.Entry;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -25,7 +23,7 @@ class Result {
     public static long arrayManipulation(int n, List<List<Integer>> queries) {
         long max=0;
         long sum=0;
-        int[] working_array = new int[n];
+        int[] working_array = new int[n+1];
         for(List<Integer> query:queries){
             int add = query.get(2);
             working_array[query.get(0)-1]+=add;
