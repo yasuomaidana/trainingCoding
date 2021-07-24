@@ -3,7 +3,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -20,10 +19,10 @@ class Result {
     public static void checkMagazine(List<String> magazine, List<String> note) {
         HashMap<String,Integer> words = new HashMap<>();
         for(String word:magazine){
-            if(words.get(word)==null) words.put(word, 0);
-            else words.replace(word,words.get(word)+1);
+            words.replace(word,words.getOrDefault(word, -1)+1);
         }
         for(String word:note){
+            if(!words.containsKey(word)){System.out.println("No");return;}
             if(words.get(word)<0){
                 System.out.println("No");
                 return;
@@ -41,9 +40,9 @@ public class Solution {
 
         String[] firstMultipleInput = bufferedReader.readLine().replaceAll("\\s+$", "").split(" ");
 
-        int m = Integer.parseInt(firstMultipleInput[0]);
+        Integer.parseInt(firstMultipleInput[0]);
 
-        int n = Integer.parseInt(firstMultipleInput[1]);
+        Integer.parseInt(firstMultipleInput[1]);
 
         List<String> magazine = Stream.of(bufferedReader.readLine().replaceAll("\\s+$", "").split(" "))
             .collect(toList());
