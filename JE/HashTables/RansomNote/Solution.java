@@ -19,11 +19,10 @@ class Result {
     public static void checkMagazine(List<String> magazine, List<String> note) {
         HashMap<String,Integer> words = new HashMap<>();
         for(String word:magazine){
-            words.replace(word,words.getOrDefault(word, -1)+1);
+            words.put(word,words.getOrDefault(word, -1)+1);
         }
         for(String word:note){
-            if(!words.containsKey(word)){System.out.println("No");return;}
-            if(words.get(word)<0){
+            if(words.getOrDefault(word, -1)<0){
                 System.out.println("No");
                 return;
             }
