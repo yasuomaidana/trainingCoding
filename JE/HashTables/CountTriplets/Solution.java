@@ -11,30 +11,29 @@ import java.util.stream.Stream;
 
 public class Solution {
 
-    // Complete the countTriplets function below.
-    static long countTriplets(List<Long> arr, long r,int n) {
-        HashMap<Long,Integer> powers = new HashMap<>();
-        for(Long num: arr){
-            Integer a=powers.putIfAbsent(num, 1);
-            if(a!=null){
-                powers.put(num,a+1);
-            }
+    static HashMap<Long,Integer> toDict(List<Long> arr){
+        HashMap<Long,Integer> ret = new HashMap<>();
+        for(Long number: arr){
+            if(ret.putIfAbsent(number,1)!=null) ret.compute(number, (k,v)->v+1);
+            
         }
-        int triplets =0;
-        for(int i=0;i<n-2;i++){
-            int elements=0;
-            for(int j=0;j<3;j++){
-                long pow = (long) Math.pow(r, i+j);
-                int power =powers.getOrDefault(pow,-1);
-                if(power>0){
-                    if(power>elements) elements=power;
-                }
-                else{
-                    elements = -1;
-                    break;
-                }
+        return ret;
+    }
+    static long countTriplets(List<Long> arr, long r) {
+        long triplets = 0;
+        HashMap<Long,Integer> futureMap = toDict(arr);
+        HashMap<Long,Integer> pastMap = new HashMap<>();
+        for(Long number:arr){
+            long future = number*r;
+            long past = number/r;
+            int modulus = (int) (number%r);
+            futureMap.compute(number,(key,value)->value-1);
+            if(pastMap.containsKey(past)&&futureMap.containsKey(future)&&modulus==0){
+                triplets+=pastMap.get(past)*futureMap.get(future);
             }
-            if(elements>0) triplets+=elements;
+            if(pastMap.putIfAbsent(number, 1)!=null) 
+            pastMap.compute(number, (key,value)->value+1);
+
         }
         return triplets;
     }
@@ -45,7 +44,7 @@ public class Solution {
 
         String[] nr = bufferedReader.readLine().replaceAll("\\s+$", "").split(" ");
 
-        int n = Integer.parseInt(nr[0]);
+        Integer.parseInt(nr[0]);
 
         long r = Long.parseLong(nr[1]);
 
@@ -53,7 +52,7 @@ public class Solution {
             .map(Long::parseLong)
             .collect(toList());
 
-        long ans = countTriplets(arr, r,n);
+        long ans = countTriplets(arr, r);
 
         bufferedWriter.write(String.valueOf(ans));
         bufferedWriter.newLine();
