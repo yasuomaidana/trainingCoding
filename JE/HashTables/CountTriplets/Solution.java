@@ -2,6 +2,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,18 +12,21 @@ import java.util.stream.Stream;
 
 public class Solution {
 
-    static HashMap<Long,Integer> toDict(List<Long> arr){
-        HashMap<Long,Integer> ret = new HashMap<>();
+    static HashMap<Long,Long> toDict(List<Long> arr){
+        HashMap<Long,Long> ret = new HashMap<>();
         for(Long number: arr){
-            if(ret.putIfAbsent(number,1)!=null) ret.compute(number, (k,v)->v+1);
+            if(ret.getOrDefault(number,(long) -1)<0){
+                ret.put(number,(long) 1);
+            }
+            else ret.compute(number, (k,v)->v+1);
             
         }
         return ret;
     }
     static long countTriplets(List<Long> arr, long r) {
         long triplets = 0;
-        HashMap<Long,Integer> futureMap = toDict(arr);
-        HashMap<Long,Integer> pastMap = new HashMap<>();
+        HashMap<Long,Long> futureMap = toDict(arr);
+        HashMap<Long,Long> pastMap = new HashMap<>();
         for(Long number:arr){
             long future = number*r;
             long past = number/r;
@@ -31,15 +35,17 @@ public class Solution {
             if(pastMap.containsKey(past)&&futureMap.containsKey(future)&&modulus==0){
                 triplets+=pastMap.get(past)*futureMap.get(future);
             }
-            if(pastMap.putIfAbsent(number, 1)!=null) 
-            pastMap.compute(number, (key,value)->value+1);
+            if(pastMap.getOrDefault(number,(long) -1)<0){
+                pastMap.put(number,(long) 1);
+            }
+            else pastMap.compute(number, (k,v)->v+1);
 
         }
         return triplets;
     }
 
     public static void main(String[] args) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader bufferedReader = new BufferedReader(new FileReader("input03.txt"));
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("result.txt"));
 
         String[] nr = bufferedReader.readLine().replaceAll("\\s+$", "").split(" ");
