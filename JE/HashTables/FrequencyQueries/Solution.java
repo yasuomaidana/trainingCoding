@@ -13,16 +13,25 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Solution {
-    static HashMap<Integer,Integer> add(int x, HashMap<Integer,Integer> Map){
-        Map.compute(x, (k,v)-> v==null ? 1:v+1);
-        return Map;
+    static HashMap<Integer,Integer> values = new HashMap<>();
+    static HashMap<Integer,Integer> data = new HashMap<>();
+    static void add(int x){
+        data.compute(x, (k,v)-> v==null ? 1:v+1);
+        int quantity = data.get(x);
+        if(quantity-1>0) values.compute(quantity-1, (k,v)-> v-1<=0 ? 0:v-1);
+        values.compute(quantity, (k,v)-> v==null ? 1:v+1);
+        return;
     }
-    static HashMap<Integer,Integer> delete(int y, HashMap<Integer,Integer> Map){
-        Map.compute(y, (k,v)-> v==null|v<=1 ? 0:v-1);
-        return Map;
+    static void delete(int y){
+        data.compute(y, (k,v)-> v==null||v<=1 ? 0:v-1);
+        int quantity = data.getOrDefault(y,-1);
+        if (quantity<=0) return;
+        values.compute(quantity+1, (k,v)-> v-1<=0 ? 0:v-1);
+        if(quantity>0) values.compute(quantity, (k,v)-> v+1);
+        return;
     }
-    static int check(int z, HashMap<Integer,Integer> Map){
-        if(Map.containsValue(z)){
+    static int check(int z){
+        if(values.getOrDefault(z, -1)>0){
             System.out.println("1");
             return 1;
         }
@@ -32,19 +41,19 @@ public class Solution {
     // Complete the freqQuery function below.
     static List<Integer> freqQuery(List<List<Integer>> queries) {
         List<Integer> ret = new ArrayList<>();
-        HashMap<Integer,Integer> data = new HashMap<>();
+        
         for(List<Integer> query:queries){
             int op = query.get(0);
             int num = query.get(1);
             switch (op){
                 case 1:
-                data = add(num,data);
+                add(num);
                 break;
                 case 2:
-                data = delete(num,data);
+                delete(num);
                 break;
                 case 3:
-                ret.add(check(num, data));
+                ret.add(check(num));
                 break;
             }
         }
