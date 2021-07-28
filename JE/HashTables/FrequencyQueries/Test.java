@@ -1,18 +1,15 @@
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class Solution {
+public class Test {
     static HashMap<Integer,Integer> values = new HashMap<>();
     static HashMap<Integer,Integer> data = new HashMap<>();
     static int i =0;
@@ -82,8 +79,8 @@ public class Solution {
     }
 
     public static void main(String[] args) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("result.txt"));
+        BufferedReader bufferedReader = new BufferedReader(new FileReader("input10.txt"));
+        BufferedReader bufferedWriter = new BufferedReader(new FileReader("output10.txt"));
 
         int q = Integer.parseInt(bufferedReader.readLine().trim());
 
@@ -100,16 +97,19 @@ public class Solution {
                 throw new RuntimeException(ex);
             }
         });
-
         List<Integer> ans = freqQuery(queries);
-
-        bufferedWriter.write(
-            ans.stream()
-                .map(Object::toString)
-                .collect(joining("\n"))
-            + "\n"
-        );
-
+        String line;
+        System.out.println("Comparison starts ----");
+        List<Integer> real_ans = new ArrayList<>();
+        while((line = bufferedWriter.readLine()) != null){
+            real_ans.add(Integer.parseInt(line));
+        }
+        for(int i =0;i<ans.size();i++){
+            int real = real_ans.get(i);
+            int current = ans.get(i);
+            if(real!=current) 
+            System.out.println("Real :"+real+" Current:"+current+" i:"+i);
+        }
         bufferedReader.close();
         bufferedWriter.close();
     }
