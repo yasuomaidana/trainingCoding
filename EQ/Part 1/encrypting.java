@@ -24,6 +24,9 @@ class encrypter{
     }
     
     encrypter(int start){
+        fillDict(start);
+    }
+    private void fillDict(int start){
         String[] symbols = emojis.codePoints().boxed().map(i -> new String(Character.toChars(i))).toArray(String[]::new);
         char[] lettersArr = letters.toCharArray();
         int i = 0;
