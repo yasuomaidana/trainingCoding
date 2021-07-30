@@ -54,7 +54,7 @@ public class encrypting{
         Scanner myReader =new Scanner(reader);
         FileWriter myWriter = new FileWriter("encryptedMessage.txt");
 
-        encrypting Encrypting = new encrypting(30);
+        encrypting Encrypting = new encrypting(50);
 
         while (myReader.hasNextLine()) {
             String data = myReader.nextLine();

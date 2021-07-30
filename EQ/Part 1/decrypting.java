@@ -89,7 +89,7 @@ public class decrypting extends decrypter{
         Scanner myReader =new Scanner(reader);
         FileWriter myWriter = new FileWriter("decryptedMessage.txt");
         decrypting Decrypting = new decrypting();
-        Decrypting.decryptByDate("29/07/2021", "🐗💯🐌💯/🐞💯🐛💯/🐗💯🐞💯🐗💯🐺💯");
+        Decrypting.decryptByDate("29/07/2021", "🦎💯🐰💯/🦊💯🐭💯/🦎💯🦊💯🦎💯🐍💯");
         while(myReader.hasNext()){
             myWriter.write(Decrypting.reveal_line(myReader.nextLine()));
         }
