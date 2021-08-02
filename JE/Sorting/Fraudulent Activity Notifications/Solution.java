@@ -5,40 +5,12 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.stream.Stream;
-
-class Data{
-    int[] trailing;
-    int oldestInd;
-    int newestInd;
-    private void add(int expenditure,int max){
-        int low_ind = 0;
-        int max_ind = max;
-        if(trailing[max_ind]==0) {
-            trailing[max_ind]=expenditure;
-            return;
-        }
-        while(max_ind-1!=low_ind){
-            int low_Val = trailing[low_ind];
-            if(expenditure==low_Val) break;
-            if(expenditure>low_Val){
-                int new_low_ind=(low_ind+max_ind)/2;
-                if(expenditure>trailing[new_low_ind]) max_ind=new_low_ind;
-                else low_ind = new_low_ind;
-            }
-        }
-        int max_Val = trailing[max_ind];
-        if(expenditure>max_Val) add(max_Val,max_ind);
-    }
-    public void add(int expenditure){
-        int max_ind = trailing.length-1;
-        add(expenditure,max_ind);
-    }
-    Data(int d){
-        trailing = new int[d];
-    }
-}
 class Result {
 
     /*
@@ -49,12 +21,55 @@ class Result {
      *  1. INTEGER_ARRAY expenditure
      *  2. INTEGER d
      */
+    ArrayList<Integer>  trailing = new ArrayList<>();;
+    int fully;
+    int warnings=0;
+    Queue<Integer> history= new LinkedList<>();;
+    Result(int d){
+        fully=d-1;
+    }
+    private int getMedian(){
+        ArrayList<Integer> working = trailing;
+        int l = working.size();
+        int median =0;
+        int middle =l/2;
+        if(l%2==0){
+            median = working.get(middle)+working.get(middle+1);
+        }
+        else median = working.get(middle)*2;
+        return median;
+    }
+    public void add(int expenditure){
+        if(fully>-1){
+            trailing.add(expenditure);
+            history.add(expenditure);
+            fully--;
+            if(fully==-1) Collections.sort(trailing);
+        }else{
+            warnings+= expenditure>=getMedian() ? 1:0;
+            history.add(expenditure);
+            int indToRemove = trailing.indexOf(history.poll());
+            trailing.remove(indToRemove);
+            int last = trailing.size()-1;
+            if(trailing.get(last)<expenditure){
+                trailing.add(expenditure);
+                return;
+            }
+            for(int i=0;i<last;i++)
+            {
+                if(trailing.get(i)>expenditure){
+                    trailing.add(i, expenditure);
+                }
+            }
+        }
+        
+    }
     public static int activityNotifications(List<Integer> expenditure, int d) {
-        Data working = new Data(d);
-        working.add(20);
-        working.add(30);
-        working.add(10);
-        return 0;
+        Result working = new Result(d);
+        for(int ex:expenditure){
+            working.add(ex);
+        }
+        return working.warnings;
     }
 
 }
@@ -66,7 +81,7 @@ public class Solution {
 
         String[] firstMultipleInput = bufferedReader.readLine().replaceAll("\\s+$", "").split(" ");
 
-        int n = Integer.parseInt(firstMultipleInput[0]);
+        Integer.parseInt(firstMultipleInput[0]);
 
         int d = Integer.parseInt(firstMultipleInput[1]);
 
