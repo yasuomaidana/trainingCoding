@@ -6,7 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -21,55 +21,122 @@ class Result {
      *  1. INTEGER_ARRAY expenditure
      *  2. INTEGER d
      */
-    ArrayList<Integer>  trailing = new ArrayList<>();;
-    int fully;
-    int warnings=0;
-    Queue<Integer> history= new LinkedList<>();;
-    Result(int d){
-        fully=d-1;
+    private HashMap<Integer,Integer> ExpendituresCounter = new HashMap<>();
+    private Queue<Integer> ExpendituresHistory = new LinkedList<>();
+    private ArrayList<Integer> AliveExpenditures = new ArrayList<>();
+    private boolean odd;
+    private int ind1,ind2,trailingDays,notifications;
+    Result(int size){
+        odd = size%2==0;
+        if(odd) ind1 = size/2;
+        else ind1=size/2+1;
+        ind2 = ind1+1;
+        trailingDays = size;
+        notifications = 0;
     }
-    private int getMedian(){
-        ArrayList<Integer> working = trailing;
-        int l = working.size();
-        int median =0;
-        int middle =l/2;
-        if(l%2==0){
-            median = working.get(middle)+working.get(middle+1);
+    private int findAliveIndex(int expenditure){
+        int windowMax = AliveExpenditures.size()-1;
+        int windowMin = 0;
+        while(windowMax!=windowMin-1){
+            if(AliveExpenditures.get(windowMax)==expenditure) return windowMax;
+            if(AliveExpenditures.get(windowMin)==expenditure) return windowMin;
+            int inter = (windowMax+windowMin)/2;
+            int interValue = AliveExpenditures.get(inter);
+            if(interValue==expenditure) return inter;
+            if(expenditure>interValue){
+                windowMin=inter;
+            }else{
+                windowMax=inter;
+            }
         }
-        else median = working.get(middle)*2;
-        return median;
+        return -1;
+    }
+    private void MoveWindow(int expenditure){
+        ExpendituresHistory.add(expenditure);
+        int toRemove = ExpendituresHistory.poll();
+        if(ExpendituresCounter.containsKey(expenditure)) ExpendituresCounter.compute(expenditure,(k,v)->v+1);
+        else addNew(expenditure);
+        ExpendituresCounter.compute(toRemove,(k,v)->v-1);
+        if(ExpendituresCounter.get(toRemove)<=0){
+            int indToRemove = findAliveIndex(toRemove);
+            ExpendituresCounter.remove(toRemove);
+            AliveExpenditures.remove(indToRemove);
+        }
+    }
+    private void addByMiddle(int expenditure){
+        int windowMax = AliveExpenditures.size()-1;
+        int windowMin = 0;
+        while(windowMax!=windowMin+1){
+            int inter = (windowMax+windowMin)/2;
+            if(expenditure>AliveExpenditures.get(inter)){
+                windowMin=inter;
+            }else{
+                windowMax=inter;
+            }
+        }
+        AliveExpenditures.add(windowMax, expenditure);
+        ExpendituresCounter.put(expenditure,1);
+    }
+    private void addNew(int expenditure){
+        int windowMax = AliveExpenditures.size()-1;
+        int windowMin = 0;
+        if(expenditure>AliveExpenditures.get(windowMax)){
+            ExpendituresCounter.put(expenditure,1);
+            AliveExpenditures.add(expenditure);
+            return;
+        }
+        if(expenditure<AliveExpenditures.get(windowMin)){
+            ExpendituresCounter.put(expenditure,1);
+            AliveExpenditures.add(0, expenditure);
+            return;
+        }
+        addByMiddle(expenditure);
+    }
+    private void firstsAdding(int expenditure){
+        trailingDays--;
+        ExpendituresHistory.add(expenditure);
+        if(AliveExpenditures.isEmpty()){
+            ExpendituresCounter.put(expenditure,1);
+            AliveExpenditures.add(expenditure);
+            return;
+        }
+        if(ExpendituresCounter.containsKey(expenditure)){
+            ExpendituresCounter.compute(expenditure,(k,v)->v+1);
+            return;
+        }
+        addNew(expenditure);
+    }
+    private void calculateNotification(int expenditure){
+        int helper=0;
+        int aliveInd=0;
+        int number = AliveExpenditures.get(aliveInd);
+        helper+=ExpendituresCounter.get(number);
+        while(helper<ind1){
+            aliveInd++;
+            number = AliveExpenditures.get(aliveInd);
+            helper+=ExpendituresCounter.get(number);
+        }
+        if(odd && ind2>helper) number+=AliveExpenditures.get(aliveInd+1);
+        else number*=2;
+        
+        if(expenditure>=number) notifications++;
     }
     public void add(int expenditure){
-        if(fully>-1){
-            trailing.add(expenditure);
-            history.add(expenditure);
-            fully--;
-            if(fully==-1) Collections.sort(trailing);
-        }else{
-            warnings+= expenditure>=getMedian() ? 1:0;
-            history.add(expenditure);
-            int indToRemove = trailing.indexOf(history.poll());
-            trailing.remove(indToRemove);
-            int last = trailing.size()-1;
-            if(trailing.get(last)<expenditure){
-                trailing.add(expenditure);
-                return;
-            }
-            for(int i=0;i<last;i++)
-            {
-                if(trailing.get(i)>expenditure){
-                    trailing.add(i, expenditure);
-                }
-            }
+        if(trailingDays>0) firstsAdding(expenditure);
+        else{
+            calculateNotification(expenditure);
+            MoveWindow(expenditure);
         }
-        
+    }
+    public int getNotifications(){
+        return notifications;
     }
     public static int activityNotifications(List<Integer> expenditure, int d) {
-        Result working = new Result(d);
+        Result workingObject = new Result(d);
         for(int ex:expenditure){
-            working.add(ex);
+            workingObject.add(ex);
         }
-        return working.warnings;
+        return workingObject.notifications;
     }
 
 }
