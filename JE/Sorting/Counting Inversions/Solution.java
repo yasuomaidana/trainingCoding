@@ -10,7 +10,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 class Result {
-
     /*
      * Complete the 'countInversions' function below.
      *
@@ -50,7 +49,7 @@ class Result {
             }
             else{
                 temp[tempInd] = righValue;
-                moves = middle-leftInd+1-tempInd;
+                moves += (middle-leftInd)+1;
                 rightInd++;
             }
             tempInd++;
