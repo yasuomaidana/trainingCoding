@@ -3,7 +3,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -34,7 +33,10 @@ class Result {
             if(counter.size()==2){
                 count = counter.values().stream().map(mapper->mapper>1 ? 1:0).reduce(0, Integer::sum);
                 List<Integer> diff = counter.keySet().stream().collect(Collectors.toList());
-                if(Math.abs(diff.get(0)-diff.get(1))>1) count = 2;
+                if(Math.abs(diff.get(0)-diff.get(1))>1){
+                    int index =diff.indexOf(1);
+                    if(index<0 ||counter.get(diff.get(index))>1) count = 2;
+                }
             }
             if(counter.size()>2||count>1) return "NO";
         }
@@ -45,6 +47,7 @@ class Result {
 public class Solution {
     public static void main(String[] args) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        //BufferedReader bufferedReader = new BufferedReader(new FileReader("input07.txt"));
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("result.txt"));
 
         String s = bufferedReader.readLine();
