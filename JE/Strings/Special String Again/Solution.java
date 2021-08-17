@@ -1,50 +1,75 @@
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Scanner;
-import java.util.Stack;
 
 public class Solution {
-    long quantity =0;
-    private HashSet<String> good = new HashSet<>();
-    private HashSet<String> bad = new HashSet<>();
-    private boolean validString(String s){
-        int size = s.length();
-        if(size==1) return true;
-        Stack<Character> toCheck = new Stack<>();
-        int middle = s.length()/2;
-        char[] letters = s.toCharArray();
-        for(int i=0;i<middle;i++){
-            toCheck.add(letters[i]);
-        }
-        if(size%2!=0) middle++;
-        for(int i=middle;i<size;i++){
-            if(letters[i]!=toCheck.pop()) return false;
-        }
-        return true;
+    private int i,size;
+    private char[] letters;
+    private long count;
+    Solution(int n,String s){
+        letters=s.toCharArray();
+        size = n;
+        i=0;
+        count=0;
     }
-    public void checkString(String s){
-        if(good.contains(s)){quantity+=1;return;}
-        if(bad.contains(s)) return;
-        if(validString(s)){good.add(s);quantity+=1;}
-        else bad.add(s);
-    }
-    static long substrCount(int n, String s) {
-        int len = s.length();
-        Solution working = new Solution();
-        for(int i =0;i<len;i++){
-            for(int j=i;j<len;j++){
-                String s2 = s.substring(i, j+1);
-                working.checkString(s2);
-            }
+    
+    private void checkConsecutives(){
+        int j=i+1;
+        long equalLetters=1;
+        while(j<size && letters[i]==letters[j]){
+            j++;
+            equalLetters++;
         }
-        return working.quantity;
+        count += (equalLetters*(equalLetters+1))/2;
+        i=j;
     }
-
-    private static final Scanner scanner = new Scanner(System.in);
+    private boolean inLimits(int Upper,int Lower){
+        return (Upper<size) && (Lower>=0);
+    }
+    private boolean equalLetters(int Upper,int Lower){
+        return letters[Upper]==letters[Lower];
+    }
+    private boolean nonConsecutives(int other){
+        return !equalLetters(i, other);
+    }
+    private void checkBox(){
+        int middleSize = 1;
+        int upperLimit = i+middleSize;
+        int lowerLimit = i-middleSize;
+        long equals =0;
+        while(inLimits(upperLimit, lowerLimit)&&
+        equalLetters(upperLimit, lowerLimit)&&
+        nonConsecutives(i-1)){
+            middleSize++;
+            upperLimit = i+middleSize;
+            lowerLimit = i-middleSize;
+            equals++;
+        }
+        count+=equals-1;
+    }
+    private long countCases(){
+        char l=' ';
+        while(i<size){
+            l = letters[i];
+            checkConsecutives();
+            if(i<size)
+            l=letters[i];
+            checkBox();
+        }
+        count --;
+        return count;
+    }
+    static long substrCount(int n, String s) {    
+        Solution working = new Solution(n,s);
+        return working.countCases();
+    }
 
     public static void main(String[] args) throws IOException {
+        Scanner scanner = new Scanner(new BufferedReader(new FileReader("input02.txt")));
+        //Scanner scanner = new Scanner(System.in);
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("result.txt"));
 
         int n = scanner.nextInt();
